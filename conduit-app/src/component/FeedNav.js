@@ -1,26 +1,43 @@
 import { Link } from "react-router-dom"
+import { UserContext } from "./Context"
+import { useContext } from "react"
 
-function FeedNav(props){
-    let {activeTab,activeloginTab,currentUser}=props
-  return(
+
+function FeedNav(props) {
+  let { activeTab, addTab } = props
+  const user = useContext(UserContext)
+  return (
     <nav className="feedNav">
-        <ul className="flex">
+      <ul className="flex">
 
-           {currentUser && 
-           <li onClick={()=>{props.removeTab('yourfeed')}}>
-               <Link to='/' className={activeloginTab==='yourfeed'?'activeTab':''}>Your Feed</Link>
+        {user &&
+          <li onClick={() => addTab(user.username)}>
+            <Link to='/'
+             className={activeTab===user.username?'activeTab':''}
+            >Your Feed</Link>
+          </li>
+        }
+
+        <li onClick={() => addTab('global')}>
+          <Link to='/'
+          className={activeTab===''?'activeTab':''}
+          >Global Feed</Link>
+        </li>
+
+        {
+          user ?
+            activeTab !== user.username && activeTab !== '' &&
+            <li>
+              <Link className={activeTab && 'activeTab'}># {activeTab}</Link>
             </li>
-            }
-            <li onClick={()=>{props.removeTab('global')}}>
-               <Link to='/' className={activeloginTab==='global'?'activeTab':''}>Global Feed</Link>
+            :
+            activeTab !== '' &&
+            <li>
+              <Link className={activeTab && 'activeTab'}># {activeTab}</Link>
             </li>
-            {activeTab && 
-              <li>
-                <Link className={activeTab && 'activeTab'}># {activeTab}</Link>
-              </li>
-            }
-        </ul>
-        <hr></hr>
+        }
+      </ul>
+      <hr></hr>
     </nav>
   )
 }

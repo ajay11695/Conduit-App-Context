@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { articlesURL } from "../utils/constant"
 import { Loader } from "./Loader"
 import { Link, useNavigate, useParams } from "react-router-dom"
+import { UserContext } from "./Context"
 
-function SingleArticle(props) {
+function SingleArticle() {
     let [state, setState] = useState({
         article: null,
         error: null,
@@ -13,6 +14,7 @@ function SingleArticle(props) {
 
     let slugQuery = useParams().slug
     let navigate = useNavigate()
+    let user=useContext(UserContext)
 
     const fetchArticle = (slug) => {
         fetch(articlesURL + '/' + slug)
@@ -39,8 +41,8 @@ function SingleArticle(props) {
 
     useEffect(() => {
         fetchArticle(slugQuery)
-        fetchcomment(slugQuery,props.user)
-    }, [props.user,slugQuery])
+        fetchcomment(slugQuery,user)
+    }, [user,slugQuery])
 
     const handleComment = (e) => {
         e.preventDefault()
@@ -49,7 +51,7 @@ function SingleArticle(props) {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                authorization: `Token ${this.props.user.token}`
+                authorization: `Token ${user.token}`
             },
             body: JSON.stringify({
                 "comment": {
@@ -57,33 +59,32 @@ function SingleArticle(props) {
                 }
             })
         }).then(res => res.json()).then(data => {
-            fetchcomment(slugQuery,props.user)
+            fetchcomment(slugQuery,user)
             e.target[0].value = ''
         })
     }
 
     const deleteComment = (id) => {
-        fetch(articlesURL + `/${this.slug}/comments/${id}`, {
+        fetch(articlesURL + `/${slugQuery}/comments/${id}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
-                authorization: `Token ${this.props.user.token}`
+                authorization: `Token ${user.token}`
             },
-        }).then(res => res.json()).then(data => fetchcomment(slugQuery,props.user)).catch(err => console.log(err))
+        }).then(res => res.json()).then(data => fetchcomment(slugQuery,user)).catch(err => console.log(err))
     }
 
     const deletePost = () => {
-        fetch(articlesURL + `/${this.slug}`, {
+        fetch(articlesURL + `/${slugQuery}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
-                authorization: `Token ${this.props.user.token}`
+                authorization: `Token ${user.token}`
             },
         }).then(res => res.json()).then(navigate('/')).catch(err => console.log(err))
     }
 
     let { article, error, comments } = state
-    console.log(state,props)
     let { author, createdAt, title, description, tagList, slug } = { ...article }
     if (error) {
         return <p className="text-align font-1 margin-t-1">{error}</p>
@@ -107,7 +108,7 @@ function SingleArticle(props) {
                         </div>
                     </div>
                 </Link>
-                {props.user && props.user.username === author.username &&
+                {user && user.username === author.username &&
                     <div style={{ margin: '10px 5rem' }}>
                         <Link to={`/article/${slug}/edit`}><button className="btn2" style={{ marginRight: '1rem' }}>Edit Post</button></Link>
                         <button onClick={deletePost} className="btn2">Delete Post</button>
@@ -120,7 +121,7 @@ function SingleArticle(props) {
                 {tagList.map(tag => <button key={tag} className="tagbtn">{tag}</button>)}
             </div>
             <div>
-                {props.user === null ?
+                {user === null ?
                     <p className="text-align font-1 margin-t-2">
                         <Link to='signin'>SignIn</Link> or
                         <Link to='signup'> SignUp</Link> to add comments on this Article
@@ -131,13 +132,13 @@ function SingleArticle(props) {
             <hr />
             {/* comment form */}
             <div className="container2">
-                {props.user &&
+                {user &&
                     <form style={{ border: '1px solid gray' }} onSubmit={handleComment}>
                         <textarea name='comment' type='text' placeholder="write comment" style={{ border: 'none', height: "4rem", width: '98%' }}></textarea>
                         <div className="flex align-center justify-between" style={{ padding: '10px', background: 'rgb(218, 220, 221)' }}>
                             <div className="flex align-center" >
-                                <img src={props.user.image} alt={props.user.username} style={{ width: '30px', height: '30px' }} />
-                                <span>{props.user.username}</span>
+                                <img src={user.image} alt={user.username} style={{ width: '30px', height: '30px' }} />
+                                <span>{user.username}</span>
                             </div>
                             <input className="formbtn" style={{ padding: "5px 10px" }} type="submit" value='post comment' />
                         </div>

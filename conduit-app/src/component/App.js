@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import { Header } from "./Header";
 import Home from "./Home";
 import SignIn from "./SignIn";
@@ -20,7 +20,7 @@ function App() {
   let [isLogged, setIsLogged] = useState(false)
   let [user, setUser] = useState(null)
   let [isVerifying, setIsVerifying] = useState(true)
-
+  let navigate=useNavigate()
 
   useEffect(() => {
     let key = localStorage[localStorageKey]
@@ -41,7 +41,6 @@ function App() {
           return res.json();
         })
         .then(({ user }) => {
-          // console.log(user)
           updateUser(user)
         }).catch(errors => console.log(errors))
 
@@ -57,6 +56,13 @@ function App() {
     localStorage.setItem(localStorageKey, userDetail.token)
   }
 
+  const handleLogout=()=>{
+    localStorage.clear()
+    setIsLogged(false)
+    setUser(null)
+    navigate('/')
+  }
+
 
   if (isVerifying) {
     return <FullPageSpinner />
@@ -67,13 +73,13 @@ function App() {
       <Header  isLogged={isLogged} />
       <ErrorBoundary>
         <Routes>
-          <Route path='/' element={<Home currentUser={user} />} />
-          <Route path='/profiles/:username' element={<Profile user={user} />} />
-          <Route path='/article/:slug' element={<SingleArticle user={user} />} />
+          <Route path='/' element={<Home />} />
+          <Route path='/profiles/:username' element={<Profile />} />
+          <Route path='/article/:slug' element={<SingleArticle  />} />
           <Route path='*' element={<NoMatch />} />
-          <Route path='/new-post' element={<NewPost user={user} />} />
-          <Route path='/article/:slug/edit' element={<EditPost user={user} />} />
-          <Route path='/setting' element={<Setting user={user} updateUser={updateUser} />} />
+          <Route path='/new-post' element={<NewPost />} />
+          <Route path='/article/:slug/edit' element={<EditPost />} />
+          <Route path='/setting' element={<Setting updateUser={updateUser} handleLogout={handleLogout}/>} />
           <Route path='/signin' element={<SignIn updateUser={updateUser} />} />
           <Route path='/signup' element={<SignUp updateUser={updateUser} />} />
         </Routes>
