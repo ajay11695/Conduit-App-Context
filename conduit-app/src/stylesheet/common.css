@@ -1,0 +1,26 @@
+
+/* flex */
+.flex{display: flex;}
+.justify-center{justify-content: center;}
+.justify-between{justify-content: space-between;}
+.justify-evenly{justify-content: space-evenly;}
+.text-align{text-align: center;}
+.align-center{align-items: center;}
+.column{flex-direction: column;}
+.text-align-end{text-align: end;}
+
+/* font */
+.font-600{font-weight: 600;}
+.font-1{font-size: 1.2rem;}
+.font-2{font-size: 1.5rem;}
+
+/* color */
+.green{color: rgb(92,184,92);}
+.gray{color:rgb(197, 195, 197) ;}
+.red{color:tomato;}
+.black{color: black;}
+
+/* margin */
+.margin-t-1{margin-top: 1rem;}
+.margin-t-2{margin-top: 2rem;}
+.margin-b-1{margin-bottom: 1rem;}
