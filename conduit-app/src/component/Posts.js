@@ -1,9 +1,12 @@
 import { Link } from "react-router-dom"
 import { Loader } from "./Loader"
 import { articlesURL } from "../utils/constant"
+import { useContext } from "react"
+import { UserContext } from "./Context"
 
 
 function Posts(props) {
+    let user=useContext(UserContext)
     let { articles, error,setState } = props
     if (error) {
         return <>
@@ -21,7 +24,7 @@ function Posts(props) {
 
     return (
         <>
-            {articles && articles.map(article => <Article key={article.slug} {...article}  currentUser={props.currentUser} setState={setState}/>)}
+            {articles && articles.map(article => <Article key={article.slug} {...article}  currentUser={user} setState={setState}/>)}
         </>
     )
 

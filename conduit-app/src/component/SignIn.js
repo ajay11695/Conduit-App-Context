@@ -8,8 +8,8 @@ import Footer from "./Footer";
 function SignIn (props){
     let navigate=useNavigate()
     let [state,setState]=useState({
-        email:'',
-        password:'',
+        email:'mamaji123@gmail.com',
+        password:'mamaji1234',
         errors:{
             email:'',
             password:''
@@ -28,7 +28,6 @@ function SignIn (props){
     const handleSubmit=(event)=>{
         event.preventDefault()
         let {email,password}=state
-        console.log(email,password)
         fetch(loginURL,{
             method:"POST",
             headers:{
@@ -45,7 +44,6 @@ function SignIn (props){
             return res.json()
         })
         .then(({user})=>{
-            console.log(user)
             props.updateUser(user)
             setState({email:'',password:''})
             navigate('/')

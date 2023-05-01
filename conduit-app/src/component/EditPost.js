@@ -1,11 +1,13 @@
-import { useState,useEffect } from "react"
+import { useState,useEffect, useContext } from "react"
 import { articlesURL } from "../utils/constant"
 import React from "react"
 import { useNavigate } from "react-router"
 import { useParams } from "react-router"
 import Footer from "./Footer";
+import { UserContext } from "./Context"
 
-function EditPost(props) {
+function EditPost() {
+    let user=useContext(UserContext)
     const navigate=useNavigate()
     const slug=useParams().slug
     let [article, setArticle] = useState({
@@ -47,7 +49,7 @@ function EditPost(props) {
             method:"PUT",
             headers:{
                 "Content-Type":"application/json",
-                authorization:`Token ${props.user.token}`
+                authorization:`Token ${user.token}`
             },
            body:JSON.stringify({article:{title,description,body,tagList:tagList.split(',').map(tag=>tag.trim())}})
         })

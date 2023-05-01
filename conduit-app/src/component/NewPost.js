@@ -1,10 +1,12 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { articlesURL } from "../utils/constant"
 import React from "react"
 import { useNavigate } from "react-router"
 import Footer from "./Footer";
+import { UserContext } from "./Context";
 
-function NewPost(props) {
+function NewPost() {
+    let user=useContext(UserContext)
     let navigate=useNavigate()
     let [article, setArticle] = useState({
         title: '',
@@ -31,7 +33,7 @@ function NewPost(props) {
             method:"POST",
             headers:{
                 "Content-Type":"application/json",
-                authorization:`Token ${props.user.token}`
+                authorization:`Token ${user.token}`
             },
            body:JSON.stringify({article:{title,description,body,tagList:tagList.split(',').map(tag=>tag.trim())}})
         })

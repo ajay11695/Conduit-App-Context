@@ -1,17 +1,18 @@
 import Posts from "./Posts";
-import { useState ,useEffect} from "react";
+import { useState ,useEffect, useContext} from "react";
 import { articlesURL, getProfileURL } from "../utils/constant";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import Footer from "./Footer";
+import { UserContext } from "./Context";
 
-function Profile(props) {
+function Profile() {
     let [state,setState]=useState({
         articles:null,
         activeTab:'author',
         profile:''
     })
-
+    let user=useContext(UserContext)
     let username=useParams().username
 
     function fetchData(activeTab,username,user){
@@ -28,7 +29,6 @@ function Profile(props) {
             return res.json()
         })
             .then(data => {
-                console.log(data)
                setState(prevState=>({...prevState,articles:data.articles}))
             }).catch((error) => {
                 console.log(error)
@@ -64,9 +64,9 @@ function Profile(props) {
     }
 
     useEffect(()=>{
-        fetchData(state.activeTab,username,props.user)
-        fetchprofile(username,props.user)
-    },[state.activeTab,props.user,username])
+        fetchData(state.activeTab,username,user)
+        fetchprofile(username,user)
+    },[state.activeTab,user,username])
 
     function handleTab(tab){
         setState(prevState=>({...prevState,activeTab:tab}))
@@ -74,20 +74,19 @@ function Profile(props) {
 
     function handleFollow(following){
          if(following){
-           fetchFollow(username,'DELETE',props.user)
+           fetchFollow(username,'DELETE',user)
          }else{
-            fetchFollow(username,'POST',props.user)
+            fetchFollow(username,'POST',user)
          }
     }
 
     let {articles,activeTab,profile}=state
-    console.log(articles)
     return (
         <div >
             <div className="flex column justify-center align-center profileHeader">
                 <img src={profile.image} alt='user' />
                 <h1 className="font-2 font-600 margin-t-1">{profile.username}</h1>
-                {props.user && props.user.username===username?
+                {user && user.username===username?
                 <Link to='/setting'><span className=" profileFollow margin-t-2 "><i className="fa-solid fa-gear"></i> Edit Profile Setting</span></Link>
                 :
                 <span onClick={()=>{handleFollow(profile.following)}} className=" profileFollow margin-t-2 curser"><strong className="font-1 font-600">{profile.following?'Unfollow':'Follow' } </strong> ({profile.username})</span>
@@ -99,7 +98,7 @@ function Profile(props) {
                     <a href='#a' onClick={()=>{handleTab('favorited')}} className={activeTab === 'favorited' ? 'activeTab' : ''}>Favorite Article</a>
                     <hr />
                 </nav>
-                {articles===null ? <h1>No Article Found</h1> : <Posts articles={articles} currentUser={props.user} setState={setState}/>}
+                {articles===null ? <h1>No Article Found</h1> : <Posts articles={articles} currentUser={user} setState={setState}/>}
             </div>
                 {articles ? articles.length>1?<Footer/>:<div className="footer-position"><Footer/></div>:''}
         </div>

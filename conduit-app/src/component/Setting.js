@@ -1,14 +1,16 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { useNavigate } from "react-router"
 import { updateUserURL } from "../utils/constant"
 import Footer from "./Footer";
+import { UserContext } from "./Context";
 
 function Setting(props) {
+    let user=useContext(UserContext)
     const navigate=useNavigate()
      let [updateCurrentUser,setUpdateCurrentuser]=useState({
-        image:props.user.image,
-        username:props.user.username,
-        email:props.user.email,
+        image:user.image,
+        username:user.username,
+        email:user.email,
         bio:'',
         password:''})
 
@@ -30,7 +32,7 @@ function Setting(props) {
                 method: "PUT",
                 headers: {
                   "Content-Type": "application/json",
-                  authorization: `Token ${props.user.token}`,
+                  authorization: `Token ${user.token}`,
                 },
                 body: JSON.stringify({
                   user: { username, email, bio, image, password },
@@ -66,10 +68,8 @@ function Setting(props) {
                 </form>
                 <hr/>
                 <div className="text-align">
-                    <button onClick={()=>{
-                        localStorage.clear()
-                        navigate("/")
-                    }} className="logoutbtn font-1 red ">or click here logout</button>
+                    <button onClick={props.handleLogout}
+                     className="logoutbtn font-1 red ">or click here logout</button>
                 </div>
             </div>
             <div className="footer-position"><Footer/></div>
